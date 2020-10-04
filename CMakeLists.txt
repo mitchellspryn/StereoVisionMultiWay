@@ -6,6 +6,7 @@ add_compile_options(-O3)
 #add_compile_options(-O0)
 
 find_package(OpenCV REQUIRED)
+find_package(OpenMP REQUIRED)
 
 #SET(CMAKE_BUILD_TYPE "Debug")
 SET(CMAKE_BUILD_TYPE "Release")
@@ -20,9 +21,11 @@ add_executable(GenerateDisparityVisualization
     src/GenerateDisparityVisualization.cpp
     src/CommonArgumentParser.cpp
     src/DisparityMapGeneratorFactory.cpp
+    src/OpenMpThreadedDisparityMapGenerator.cpp
     src/SingleThreadedDisparityMapGenerator.cpp)
 
 target_link_libraries(GenerateDisparityVisualization
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
+  OpenMP::OpenMP_CXX
 )

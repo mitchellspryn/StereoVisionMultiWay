@@ -1,11 +1,14 @@
 #include "../include/DisparityMapGeneratorFactory.hpp"
 #include "../include/SingleThreadedDisparityMapGenerator.hpp"
+#include "../include/OpenMpThreadedDisparityMapGenerator.hpp"
 
 std::unique_ptr<DisparityMapGenerator> DisparityMapGeneratorFactory::create(
         const DisparityMapAlgorithmParameters_t& parameters) {
     
     if (this->caseInsensitiveStringsEqual(parameters.algorithmName, "SingleThreaded")) {
         return std::make_unique<SingleThreadedDisparityMapGenerator>(parameters);
+    } else if (this->caseInsensitiveStringsEqual(parameters.algorithmName, "OpenMP")) {
+        return std::make_unique<OpenMpThreadedDisparityMapGenerator>(parameters);
     } else {
         throw std::runtime_error("Unrecognized algorithmName '" 
             + parameters.algorithmName
