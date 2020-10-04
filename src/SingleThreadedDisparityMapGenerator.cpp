@@ -34,10 +34,6 @@ void SingleThreadedDisparityMapGenerator::computeDisparity(
 }
 
 void SingleThreadedDisparityMapGenerator::ensureParametersValid() {
-    if (this->parameters_.disparityMetric != SUM_ABSOLUTE_DIFFERENCE) {
-        throw std::runtime_error("Unsupported disparity metric.");
-    }   
-
     if (this->parameters_.blockSize < 0) {
         throw std::runtime_error("Error: block size is less than zero.");
     }
@@ -52,10 +48,6 @@ void SingleThreadedDisparityMapGenerator::ensureParametersValid() {
 
     if (this->parameters_.rightScanSteps < 0) {
         throw std::runtime_error("Error: right scan steps is negative.");
-    }
-
-    if (this->parameters_.disparityMetric != SUM_ABSOLUTE_DIFFERENCE) {
-        throw std::runtime_error("SAD is only suported metric.");
     }
 }
 

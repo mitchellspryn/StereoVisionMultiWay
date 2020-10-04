@@ -26,23 +26,6 @@ void CudaDisparityMapGenerator::computeDisparity(
         const cv::Mat& rightImage,
         cv::Mat& disparity) {
 
-    cv::Mat m = cv::Mat::zeros(2, 2, CV_8UC1);
-    m.at<unsigned char>(0, 0) = 1;
-    m.at<unsigned char>(0, 1) = 2;
-    m.at<unsigned char>(1, 0) = 3;
-    m.at<unsigned char>(1, 1) = 4;
-
-    unsigned char* cc = m.data;
-    std::cout 
-        << static_cast<int>(cc[0])
-        << "," 
-        << static_cast<int>(cc[1])
-        << "," 
-        << static_cast<int>(cc[2])
-        << "," 
-        << static_cast<int>(cc[3])
-        << std::endl;
-
     computeDisparityCuda(
         leftImage.rows,
         leftImage.cols,
@@ -55,10 +38,6 @@ void CudaDisparityMapGenerator::computeDisparity(
 }
 
 void CudaDisparityMapGenerator::ensureParametersValid() {
-    if (this->parameters_.disparityMetric != SUM_ABSOLUTE_DIFFERENCE) {
-        throw std::runtime_error("Unsupported disparity metric.");
-    }   
-
     if (this->parameters_.blockSize < 0) {
         throw std::runtime_error("Error: block size is less than zero.");
     }
@@ -73,10 +52,6 @@ void CudaDisparityMapGenerator::ensureParametersValid() {
 
     if (this->parameters_.rightScanSteps < 0) {
         throw std::runtime_error("Error: right scan steps is negative.");
-    }
-
-    if (this->parameters_.disparityMetric != SUM_ABSOLUTE_DIFFERENCE) {
-        throw std::runtime_error("SAD is only suported metric.");
     }
 }
 

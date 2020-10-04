@@ -5,18 +5,49 @@
 #include <stdexcept>
 
 #include <opencv2/core.hpp>
+#include <opencv2/core/utility.hpp>
 #include <opencv2/imgcodecs.hpp>
 
-#include "../include/CommonArgumentParser.hpp"
 #include "../include/DisparityMapAlgorithmParameters.hpp"
 #include "../include/DisparityMapGenerator.hpp"
 #include "../include/DisparityMapGeneratorFactory.hpp"
 
 int main(int argc, char** argv) {
-    std::cout << "Parsing command line parameters..." << std::endl;
 
-    CommonArgumentParser parser;
-    DisparityMapAlgorithmParameters_t parameters = parser.parseFromCommandLine(argc, argv);
+    const cv::String commandLineKeys = 
+        "{help h usage ? |                          | This program takes in two images and generates a disparity map.}"
+        "{leftImage       |                  <none> | The left image to process.}"
+        "{rightImage      |                  <none> | The right image to proces.}"
+        "{algorithmName   |                  <none> | The algorithm name to use.}"
+        "{outputPath      |           disparity.png | The output path to which to write the image.}"
+        "{blockSize       |                       7 | The maximum block size to use for matching.}"
+        "{leftScanSteps   |                      50 | The number of blocks to scan to the left.}"
+        "{rightScanSteps  |                      50 | The number of blocks to scan to the right.}";
+
+    cv::CommandLineParser parser(argc, argv, commandLineKeys);
+
+    if (!parser.check()) {
+        parser.printMessage();
+        parser.printErrors();
+        return 1;
+    }
+
+    if (parser.has("help")
+        || (!parser.has("leftImage"))
+        || (!parser.has("rightImage"))
+        || (!parser.has("algorithmName"))) {
+        parser.printMessage();
+        return 1;
+    }
+
+    DisparityMapAlgorithmParameters_t parameters;
+    parameters.blockSize = parser.get<int>("blockSize");
+    parameters.leftScanSteps = parser.get<int>("leftScanSteps");
+    parameters.rightScanSteps = parser.get<int>("rightScanSteps");
+    parameters.leftImageFilePath = std::string(parser.get<cv::String>("leftImage"));
+    parameters.rightImageFilePath = std::string(parser.get<cv::String>("rightImage"));
+    parameters.outputPath = std::string(parser.get<cv::String>("outputPath"));
+    parameters.algorithmName = std::string(parser.get<cv::String>("algorithmName"));
 
     std::cout << "Creating disparity generator..." << std::endl;
 
@@ -67,7 +98,7 @@ int main(int argc, char** argv) {
     std::cout << "\tBlock Size: " << parameters.blockSize << "." << std::endl;
     std::cout << "\tLeft Scan Steps: " << parameters.leftScanSteps << "." << std::endl;
     std::cout << "\tRight Scan Steps: " << parameters.rightScanSteps << "." << std::endl;
-    std::cout << "\tDisparity Metric: " << parameters.disparityMetric << "." << std::endl;
+    std::cout << "\tDisparity Metric: " << "SUM_ABSOLUTE_DIFFERENCE" << "." << std::endl;
     std::cout << "\tLeft Image: " << parameters.leftImageFilePath << "." << std::endl;
     std::cout << "\tRight Image: " << parameters.rightImageFilePath << "." << std::endl;
     std::cout << "\tImage Size: (" << leftImage.rows << "x" << leftImage.cols << ")." << std::endl;

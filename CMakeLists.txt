@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 2.8.3)
 project(StereoVisionMultiWay LANGUAGES CXX CUDA)
 
 add_compile_options(-std=c++14)
-#add_compile_options(-O3)
-#add_compile_options(-O0)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
@@ -25,14 +23,11 @@ add_executable(GenerateDisparityVisualization
     src/GenerateDisparityVisualization.cpp
     src/CudaFunctions.cu
     src/CudaDisparityMapGenerator.cpp
-    src/CommonArgumentParser.cpp
     src/DisparityMapGeneratorFactory.cpp
     src/OpenMpThreadedDisparityMapGenerator.cpp
     src/SingleThreadedDisparityMapGenerator.cpp)
 
 target_link_libraries(GenerateDisparityVisualization
-  ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
   ${CUDA_LIBRARY_DIRS}
-  #OpenMP::OpenMP_CXX
 )
