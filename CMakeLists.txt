@@ -2,8 +2,14 @@ cmake_minimum_required(VERSION 2.8.3)
 project(StereoVisionMultiWay)
 
 add_compile_options(-std=c++14)
+add_compile_options(-O3)
+#add_compile_options(-O0)
 
 find_package(OpenCV REQUIRED)
+
+#SET(CMAKE_BUILD_TYPE "Debug")
+SET(CMAKE_BUILD_TYPE "Release")
+SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 include_directories(
   include

@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
         << "'..." 
         << std::endl;
 
-    cv::Mat leftImage = cv::imread(parameters.leftImageFilePath, cv::IMREAD_COLOR);
+    cv::Mat leftImage = cv::imread(parameters.leftImageFilePath, cv::IMREAD_GRAYSCALE);
     
     std::cout 
         << "Reading in right image from '" 
@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
         << "'..." 
         << std::endl;
 
-    cv::Mat rightImage = cv::imread(parameters.rightImageFilePath, cv::IMREAD_COLOR);
+    cv::Mat rightImage = cv::imread(parameters.rightImageFilePath, cv::IMREAD_GRAYSCALE);
 
     if ((leftImage.rows == 0)
             ||
@@ -64,12 +64,12 @@ int main(int argc, char** argv) {
 
     std::cout << "Generating disparity image with the following parameters:" << std::endl;
     std::cout << "\tAlgorithm Name: " << parameters.algorithmName << "." << std::endl;
-    std::cout << "\tBlock Size: " << parameters.algorithmName << "." << std::endl;
-    std::cout << "\tLeft Scan Steps: " << parameters.algorithmName << "." << std::endl;
-    std::cout << "\tRight Scan Steps: " << parameters.algorithmName << "." << std::endl;
-    std::cout << "\tDisparity Metric: " << parameters.algorithmName << "." << std::endl;
-    std::cout << "\tLeft Image: " << parameters.algorithmName << "." << std::endl;
-    std::cout << "\tRight Image: " << parameters.algorithmName << "." << std::endl;
+    std::cout << "\tBlock Size: " << parameters.blockSize << "." << std::endl;
+    std::cout << "\tLeft Scan Steps: " << parameters.leftScanSteps << "." << std::endl;
+    std::cout << "\tRight Scan Steps: " << parameters.rightScanSteps << "." << std::endl;
+    std::cout << "\tDisparity Metric: " << parameters.disparityMetric << "." << std::endl;
+    std::cout << "\tLeft Image: " << parameters.leftImageFilePath << "." << std::endl;
+    std::cout << "\tRight Image: " << parameters.rightImageFilePath << "." << std::endl;
     std::cout << "\tImage Size: (" << leftImage.rows << "x" << leftImage.cols << ")." << std::endl;
     std::cout << "\tOutput Path: " << parameters.outputPath << std::endl;
 

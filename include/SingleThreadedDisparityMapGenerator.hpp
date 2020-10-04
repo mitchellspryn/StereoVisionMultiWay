@@ -24,6 +24,22 @@ class SingleThreadedDisparityMapGenerator : public DisparityMapGenerator {
 
     private:
         DisparityMapAlgorithmParameters_t parameters_;
+        std::vector<int> disparityBuf_;
 
         void ensureParametersValid();
+        float computeDisparityForPixel(
+                int y, 
+                int x, 
+                const cv::Mat& leftImage, 
+                const cv::Mat& rightImage);
+
+        int computeSadOverBlock(
+                int minYL,
+                int minXL,
+                int minYR,
+                int minXR,
+                int width,
+                int height,
+                const cv::Mat& leftImage,
+                const cv::Mat& rightImage);
 };
