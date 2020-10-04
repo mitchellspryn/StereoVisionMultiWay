@@ -31,3 +31,16 @@ target_link_libraries(GenerateDisparityVisualization
   ${OpenCV_LIBRARIES}
   ${CUDA_LIBRARY_DIRS}
 )
+
+add_executable(SpeedTest 
+    src/SpeedTest.cpp
+    src/CudaFunctions.cu
+    src/CudaDisparityMapGenerator.cpp
+    src/DisparityMapGeneratorFactory.cpp
+    src/OpenMpThreadedDisparityMapGenerator.cpp
+    src/SingleThreadedDisparityMapGenerator.cpp)
+
+target_link_libraries(SpeedTest
+  ${OpenCV_LIBRARIES}
+  ${CUDA_LIBRARY_DIRS}
+)

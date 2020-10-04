@@ -15,7 +15,7 @@
 int main(int argc, char** argv) {
 
     const cv::String commandLineKeys = 
-        "{help h usage ? |                          | This program takes in two images and generates a disparity map.}"
+        "{help h usage ?  |                         | This program takes in two images and generates a disparity map.}"
         "{leftImage       |                  <none> | The left image to process.}"
         "{rightImage      |                  <none> | The right image to proces.}"
         "{algorithmName   |                  <none> | The algorithm name to use.}"
