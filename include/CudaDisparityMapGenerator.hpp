@@ -12,6 +12,8 @@ class CudaDisparityMapGenerator : public DisparityMapGenerator {
         CudaDisparityMapGenerator(
             const DisparityMapAlgorithmParameters_t& parameters);
 
+        virtual ~CudaDisparityMapGenerator() override;
+
         virtual void setParameters(
             const DisparityMapAlgorithmParameters_t& parameters) override;
 
@@ -25,6 +27,10 @@ class CudaDisparityMapGenerator : public DisparityMapGenerator {
     private:
         DisparityMapAlgorithmParameters_t parameters_;
         std::vector<int> disparityBuf_;
+
+        uint8_t* leftCudaData = nullptr;
+        uint8_t* rightCudaData = nullptr;
+        float* disparityCudaData = nullptr;
 
         void ensureParametersValid();
 };

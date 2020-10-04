@@ -5,6 +5,8 @@
 #include <stdio.h>
 
 extern "C" {
+    void destroyCudaMemoryBuffers();
+
     void computeDisparityCuda(
         int imageHeight,
         int imageWidth,

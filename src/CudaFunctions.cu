@@ -131,6 +131,27 @@ void computeDisparityCudaInternal(
     }
 }
 
+static uint8_t* leftCudaData = NULL;
+static uint8_t* rightCudaData = NULL;
+static float* disparityCudaData = NULL;
+
+void destroyCudaMemoryBuffers() {
+    if (leftCudaData != NULL) {
+        cudaFree(leftCudaData);
+        leftCudaData = NULL;
+    }
+
+    if (rightCudaData != NULL) {
+        cudaFree(rightCudaData);
+        rightCudaData = NULL;
+    }
+
+    if (disparityCudaData != NULL) {
+        cudaFree(disparityCudaData);
+        disparityCudaData = NULL;
+    }
+}
+
 void computeDisparityCuda(
         int imageHeight,
         int imageWidth, 
@@ -141,17 +162,13 @@ void computeDisparityCuda(
         uint8_t* rightImageData,
         float* disparityData) {
 
-    uint8_t* leftCudaData;
-    uint8_t* rightCudaData;
-    float* disparityCudaData;
-
     int numElements = imageHeight * imageWidth;
 
-    // TODO: Do I need to malloc / free for every execution?
-    // Or can I do it once?
-    cudaMallocManaged(&leftCudaData, numElements * sizeof(uint8_t));
-    cudaMallocManaged(&rightCudaData, numElements * sizeof(uint8_t));
-    cudaMallocManaged(&disparityCudaData, numElements * sizeof(float));
+    if (leftCudaData == NULL) {
+        cudaMallocManaged(&leftCudaData, numElements * sizeof(uint8_t));
+        cudaMallocManaged(&rightCudaData, numElements * sizeof(uint8_t));
+        cudaMallocManaged(&disparityCudaData, numElements * sizeof(float));
+    }
 
     cudaMemcpy(leftCudaData, leftImageData, numElements * sizeof(uint8_t), cudaMemcpyHostToDevice);
     cudaMemcpy(rightCudaData, rightImageData, numElements * sizeof(uint8_t), cudaMemcpyHostToDevice);
@@ -171,8 +188,4 @@ void computeDisparityCuda(
     cudaDeviceSynchronize();
 
     cudaMemcpy(disparityData, disparityCudaData, numElements * sizeof(float), cudaMemcpyDeviceToHost);
-
-    cudaFree(leftCudaData);
-    cudaFree(rightCudaData);
-    cudaFree(disparityCudaData);
 }

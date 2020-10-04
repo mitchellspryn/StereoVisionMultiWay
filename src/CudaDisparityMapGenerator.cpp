@@ -10,6 +10,10 @@ CudaDisparityMapGenerator::CudaDisparityMapGenerator(
     this->disparityBuf_.resize(this->parameters_.rightScanSteps + this->parameters_.leftScanSteps + 1, 0);
 }
 
+CudaDisparityMapGenerator::~CudaDisparityMapGenerator() {
+    destroyCudaMemoryBuffers();
+}
+
 void CudaDisparityMapGenerator::setParameters(
         const DisparityMapAlgorithmParameters_t& parameters) {
     this->parameters_ = parameters;
