@@ -1,6 +1,7 @@
 #include "../include/CudaDisparityMapGenerator.hpp"
 #include "../include/DisparityMapGeneratorFactory.hpp"
 #include "../include/SingleThreadedDisparityMapGenerator.hpp"
+#include "../include/OpenClDisparityMapGenerator.hpp"
 #include "../include/OpenMpThreadedDisparityMapGenerator.hpp"
 
 std::unique_ptr<DisparityMapGenerator> DisparityMapGeneratorFactory::create(
@@ -12,7 +13,9 @@ std::unique_ptr<DisparityMapGenerator> DisparityMapGeneratorFactory::create(
         return std::make_unique<OpenMpThreadedDisparityMapGenerator>(parameters);
     } else if (this->caseInsensitiveStringsEqual(parameters.algorithmName, "CUDA")) {
         return std::make_unique<CudaDisparityMapGenerator>(parameters);
-    }else {
+    } else if (this->caseInsensitiveStringsEqual(parameters.algorithmName, "OpenCL")) {
+        return std::make_unique<OpenClDisparityMapGenerator>(parameters);
+    } else {
         throw std::runtime_error("Unrecognized algorithmName '" 
             + parameters.algorithmName
             + "'.\n"
