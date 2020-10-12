@@ -84,6 +84,7 @@ float OpenMpThreadedDisparityMapGenerator::computeDisparityForPixel(
     // Enabling parallelization here is faster than no parallelization at all,
     // but is slower than parallelizing on the center pixel level
     // #pragma omp parallel for
+    // #pragma omp simd
     for (int xx = rightMinStartX; xx <= rightMaxStartX; xx++) {
         int sad = computeSadOverBlock(
             leftMinY,
@@ -136,6 +137,7 @@ int OpenMpThreadedDisparityMapGenerator::computeSadOverBlock(
     // 2) There are a relatively small number of tasks to perform
     // 3) Each iteration of the loop is quick. More time is spent waiting for threads to start.
     // #pragma omp parallel for collapse(2) reduction(+:sum)
+    // #pragma omp simd collapse(2) reduction(+:sum)
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
             sum += std::abs(

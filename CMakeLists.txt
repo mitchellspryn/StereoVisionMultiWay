@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(StereoVisionMultiWay LANGUAGES CXX CUDA)
 
-add_compile_options(-std=c++14)
-
-# This is set separately because nvcc doesn't understand the openmp flag
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+# This is set separately because nvcc doesn't understand these flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -march=native -std=c++17")
 
 find_package(OpenCV REQUIRED)
 find_package(OpenMP REQUIRED)
@@ -40,8 +38,8 @@ target_link_libraries(GenerateDisparityVisualization
 add_custom_command(
     TARGET GenerateDisparityVisualization
     COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_SOURCE_DIR}/src/OpenclFunctions.cl
-    ${CMAKE_CURRENT_BINARY_DIR}/OpenclFunctions.cl)
+    ${CMAKE_SOURCE_DIR}/src/OpenClFunctions.cl
+    ${CMAKE_CURRENT_BINARY_DIR}/OpenClFunctions.cl)
 
 add_executable(SpeedTest 
     src/SpeedTest.cpp
@@ -61,5 +59,17 @@ target_link_libraries(SpeedTest
 add_custom_command(
     TARGET SpeedTest
     COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_SOURCE_DIR}/src/OpenclFunctions.cl
-    ${CMAKE_CURRENT_BINARY_DIR}/OpenclFunctions.cl)
+    ${CMAKE_SOURCE_DIR}/src/OpenClFunctions.cl
+    ${CMAKE_CURRENT_BINARY_DIR}/OpenClFunctions.cl)
+
+add_executable(TestSadSimd
+    src/TestSadSimd.cpp)
+
+set_target_properties(TestSadSimd
+    PROPERTIES
+    COMPILE_FLAGS
+    "-save-temps")
+
+target_link_libraries(TestSadSimd
+    ${OpenCV_LIBRARIES}
+)

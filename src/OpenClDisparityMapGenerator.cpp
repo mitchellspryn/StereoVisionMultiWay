@@ -104,7 +104,7 @@ void OpenClDisparityMapGenerator::ensureParametersValid() {
 void OpenClDisparityMapGenerator::initializeOclKernel() {
     int numPixels = this->imageWidth_ * this->imageHeight_;
 
-    std::ifstream openclProgramFile("OpenclFunctions.cl");
+    std::ifstream openclProgramFile("OpenClFunctions.cl");
     std::stringstream buf;
     buf << openclProgramFile.rdbuf();
     std::string openclProgramText = buf.str();
