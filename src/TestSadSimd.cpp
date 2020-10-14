@@ -4,6 +4,7 @@
 #include <iostream>
 #include <limits>
 #include <random>
+#include <time.h>
 #include <stdexcept>
 #include <unordered_map>
 #include <vector>
@@ -42,17 +43,17 @@ long computeSadSimd(
         const int n) {
     asm("# Start SIMD loop");
     union { __m256i accumulator; uint64_t accumulatorValues[4]; };
-    union { __m256i workRegA; uint8_t workRegABytes[256]; };
-    union { __m256i workRegB; uint8_t workRegBBytes[256]; };
-    union { __m256i sadReg; uint8_t sadRegBytes[256]; };
+    union { __m256i workRegA; uint8_t workRegABytes[32]; };
+    union { __m256i workRegB; uint8_t workRegBBytes[32]; };
+    union { __m256i sadReg; uint8_t sadRegBytes[32]; };
     accumulator = _mm256_setzero_si256();
     constexpr int numBytesPerSimd = 32;
     size_t numSimdIter = n / numBytesPerSimd;
     for (size_t i = 0 ; i < numSimdIter; i++) {
         workRegA = _mm256_load_si256(
-            reinterpret_cast<__m256i const*>(a + numBytesPerSimd));
+            reinterpret_cast<__m256i const*>(a + (i *numBytesPerSimd)));
         workRegB = _mm256_load_si256(
-            reinterpret_cast<__m256i const*>(b + numBytesPerSimd));
+            reinterpret_cast<__m256i const*>(b + (i * numBytesPerSimd)));
         sadReg = _mm256_sad_epu8(workRegA, workRegB);
         accumulator = _mm256_add_epi64(sadReg, accumulator);
     }
@@ -63,9 +64,9 @@ long computeSadSimd(
         result += static_cast<long>(accumulatorValues[i]);
     }
 
-    //for (size_t i = (numSimdIter*numBytesPerSimd); i < n; i++) {
-    //    result += static_cast<long>(std::abs(a[i] - b[i]));
-    //}
+    for (size_t i = (numSimdIter*numBytesPerSimd); i < n; i++) {
+        result += static_cast<long>(std::abs(a[i] - b[i]));
+    }
 
     asm("# End SIMD loop");
 
@@ -99,7 +100,7 @@ std::vector<double> benchmark(
     std::vector<double> result;
     result.reserve(numTrials);
 
-    std::chrono::high_resolution_clock clk;
+    clock_t t;
 
     for (size_t i = 0; i < numWarmupTrials; i++) {
         long sad = benchmarkFunc(a, b, numDataPoints);
@@ -113,9 +114,9 @@ std::vector<double> benchmark(
     }
 
     for (size_t i = 0; i < numTrials; i++) {
-        std::chrono::high_resolution_clock::time_point start = clk.now();
+        t = clock();
         long sad = benchmarkFunc(a, b, numDataPoints);
-        std::chrono::high_resolution_clock::time_point end = clk.now();
+        t = clock() - t;
         if (sad != checkNumber) {
             throw std::runtime_error("Check values did not match. Expected " 
                     + std::to_string(checkNumber)
@@ -125,7 +126,7 @@ std::vector<double> benchmark(
         }
 
         result.emplace_back(
-            std::chrono::duration_cast<std::chrono::microseconds>(end-start).count());
+                static_cast<float>(t) * 100000.0f / static_cast<float>(CLOCKS_PER_SEC));
     }
 
     return result;
@@ -214,7 +215,7 @@ int main(int argc, char** argv) {
 
     std::cout << "Completed.\n";
     std::cout << "Benchmarking SIMD implementation..." << std::endl;
-    benchmarkFunc = computeSad;
+    benchmarkFunc = computeSadSimd;
     std::vector<double> simdRuntimes = benchmark(
             numDataPoints,
             numWarmupTrials,

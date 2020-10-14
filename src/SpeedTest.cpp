@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -7,6 +6,7 @@
 #include <memory>
 #include <sstream>
 #include <stdexcept>
+#include <time.h>
 #include <unordered_map>
 #include <vector>
 
@@ -124,7 +124,7 @@ int main(int argc, char** argv) {
 
     std::unordered_map<std::string, std::vector<double>> processingTimes;
     cv::Mat disparityImage(leftImage.rows, leftImage.cols, CV_32FC1);
-    std::chrono::high_resolution_clock clk;
+    clock_t t;
 
     for (const std::string& algorithmName: algorithmNames) {
         processingTimes[algorithmName].resize(numIterations, 0);
@@ -151,12 +151,12 @@ int main(int argc, char** argv) {
         
         std::cout << "Running production iterations..." << std::endl;
         for (int i = 0; i < numIterations; i++) {
-            std::chrono::high_resolution_clock::time_point start = clk.now();
+            t = clock();
             generator->computeDisparity(leftImage, rightImage, disparityImage);
-            std::chrono::high_resolution_clock::time_point end = clk.now();
+            t = clock() - t;
 
             processingTimes[algorithmName][i] =  
-                std::chrono::duration_cast<std::chrono::microseconds>(end-start).count();
+                static_cast<float>(t) * 100000.0f / static_cast<float>(CLOCKS_PER_SEC);
 
             if (((i+1) % progressReportInterval == 0)) {
                 std::cout << "\tProcessed " << (i+1) << " / " << numIterations << " production iterations ("

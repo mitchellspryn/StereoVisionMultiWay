@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(StereoVisionMultiWay LANGUAGES CXX CUDA)
+set(CMAKE_C_COMPILER "/usr/bin/clang")
+set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+project(StereoVisionMultiWay LANGUAGES C CXX CUDA)
 
 # This is set separately because nvcc doesn't understand these flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -march=native -std=c++17")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp -march=native")
 
 find_package(OpenCV REQUIRED)
 find_package(OpenMP REQUIRED)
