@@ -49,7 +49,6 @@ long computeSadSimd(
     constexpr int numBytesPerSimd = 32;
     size_t numSimdIter = n / numBytesPerSimd;
     for (size_t i = 0 ; i < numSimdIter; i++) {
-        std::cout << "Accessing indexes " << (i*numBytesPerSimd) << " => " << i * (numBytesPerSimd+1) << std::endl;
         workRegA = _mm256_load_si256(
             reinterpret_cast<__m256i const*>(a + (i * numBytesPerSimd)));
         workRegB = _mm256_load_si256(
