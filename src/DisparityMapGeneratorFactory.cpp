@@ -4,6 +4,7 @@
 #include "../include/SingleThreadedSimdDisparityMapGenerator.hpp"
 #include "../include/OpenClDisparityMapGenerator.hpp"
 #include "../include/OpenMpThreadedDisparityMapGenerator.hpp"
+#include "../include/OpenMpThreadedSimdDisparityMapGenerator.hpp"
 
 std::unique_ptr<DisparityMapGenerator> DisparityMapGeneratorFactory::create(
         const DisparityMapAlgorithmParameters_t& parameters) {
@@ -14,6 +15,8 @@ std::unique_ptr<DisparityMapGenerator> DisparityMapGeneratorFactory::create(
       return std::make_unique<SingleThreadedSimdDisparityMapGenerator>(parameters);  
     } else if (this->caseInsensitiveStringsEqual(parameters.algorithmName, "OpenMP")) {
         return std::make_unique<OpenMpThreadedDisparityMapGenerator>(parameters);
+    } else if (this->caseInsensitiveStringsEqual(parameters.algorithmName, "OpenMPSimd")) {
+        return std::make_unique<OpenMpThreadedSimdDisparityMapGenerator>(parameters);
     } else if (this->caseInsensitiveStringsEqual(parameters.algorithmName, "CUDA")) {
         return std::make_unique<CudaDisparityMapGenerator>(parameters);
     } else if (this->caseInsensitiveStringsEqual(parameters.algorithmName, "OpenCL")) {
@@ -22,7 +25,7 @@ std::unique_ptr<DisparityMapGenerator> DisparityMapGeneratorFactory::create(
         throw std::runtime_error("Unrecognized algorithmName '" 
             + parameters.algorithmName
             + "'.\n"
-            + "Valid Options are 'SingleThreaded','OpenMP','CUDA'.");
+            + "Valid Options are 'SingleThreaded','SingleThreadedSimd','OpenMP','OpenMPSimd','CUDA', and 'OpenCL'.");
     }
 }
 
