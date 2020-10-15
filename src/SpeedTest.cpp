@@ -8,6 +8,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <time.h>
+#include <unistd.h>
 #include <unordered_map>
 #include <vector>
 
@@ -129,7 +130,8 @@ int main(int argc, char** argv) {
     std::chrono::high_resolution_clock clk;
     clock_t t;
 
-    for (const std::string& algorithmName: algorithmNames) {
+    for (size_t algorithmIdx = 0; algorithmIdx < algorithmNames.size(); algorithmIdx++) {
+        const std::string& algorithmName = algorithmNames[algorithmIdx];
         wallClockProcessingTimes[algorithmName].resize(numIterations, 0);
         cpuProcessingTimes[algorithmName].resize(numIterations, 0);
 
@@ -173,6 +175,11 @@ int main(int argc, char** argv) {
         }
 
         std::cout << "Data for " << algorithmName << " generated." << std::endl;
+
+        if (algorithmIdx < algorithmNames.size() - 1) {
+            std::cout << "Sleeping for 10 seconds to allow conditions to return to normal." << std::endl;
+            usleep(10*1000000);
+        }
     }
 
     std::cout << "Writing csv to " << templateParameters.outputPath << " ..." << std::endl;

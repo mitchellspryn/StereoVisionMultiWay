@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
-#set(CMAKE_C_COMPILER "/usr/bin/clang")
-#set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+set(CMAKE_C_COMPILER "/usr/bin/clang")
+set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 project(StereoVisionMultiWay LANGUAGES C CXX CUDA)
 
 # This is set separately because nvcc doesn't understand these flags
