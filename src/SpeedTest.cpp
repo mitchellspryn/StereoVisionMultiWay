@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -122,12 +123,15 @@ int main(int argc, char** argv) {
         algorithmNames.emplace_back(algorithmName);
     }
 
-    std::unordered_map<std::string, std::vector<double>> processingTimes;
+    std::unordered_map<std::string, std::vector<double>> wallClockProcessingTimes;
+    std::unordered_map<std::string, std::vector<double>> cpuProcessingTimes;
     cv::Mat disparityImage(leftImage.rows, leftImage.cols, CV_32FC1);
+    std::chrono::high_resolution_clock clk;
     clock_t t;
 
     for (const std::string& algorithmName: algorithmNames) {
-        processingTimes[algorithmName].resize(numIterations, 0);
+        wallClockProcessingTimes[algorithmName].resize(numIterations, 0);
+        cpuProcessingTimes[algorithmName].resize(numIterations, 0);
 
         DisparityMapAlgorithmParameters_t localParameters(templateParameters);
         localParameters.algorithmName = algorithmName;
@@ -151,12 +155,16 @@ int main(int argc, char** argv) {
         
         std::cout << "Running production iterations..." << std::endl;
         for (int i = 0; i < numIterations; i++) {
+            std::chrono::high_resolution_clock::time_point start = clk.now();
             t = clock();
             generator->computeDisparity(leftImage, rightImage, disparityImage);
             t = clock() - t;
+            std::chrono::high_resolution_clock::time_point end = clk.now();
 
-            processingTimes[algorithmName][i] =  
-                static_cast<float>(t) * 100000.0f / static_cast<float>(CLOCKS_PER_SEC);
+            cpuProcessingTimes[algorithmName][i] =  
+                static_cast<float>(t) * 1000000.0f / static_cast<float>(CLOCKS_PER_SEC);
+            wallClockProcessingTimes[algorithmName][i] =
+                std::chrono::duration_cast<std::chrono::microseconds>(end-start).count();
 
             if (((i+1) % progressReportInterval == 0)) {
                 std::cout << "\tProcessed " << (i+1) << " / " << numIterations << " production iterations ("
@@ -171,7 +179,9 @@ int main(int argc, char** argv) {
     
     std::ofstream outputStream(templateParameters.outputPath, std::ios::out);
     for (size_t i = 0; i < algorithmNames.size(); i++) {
-        outputStream << algorithmNames[i];
+        outputStream << algorithmNames[i] + "_cpu";
+        outputStream << ",";
+        outputStream << algorithmNames[i] + "_wall";
         if (i != (algorithmNames.size() - 1)) {
             outputStream << ",";
         } else {
@@ -181,7 +191,9 @@ int main(int argc, char** argv) {
 
     for (int exampleIndex = 0; exampleIndex < numIterations; exampleIndex++) {
         for (size_t i = 0; i < algorithmNames.size(); i++) {
-            outputStream << processingTimes[algorithmNames[i]][exampleIndex];
+            outputStream << cpuProcessingTimes[algorithmNames[i]][exampleIndex];
+            outputStream << ",";
+            outputStream << wallClockProcessingTimes[algorithmNames[i]][exampleIndex];
             if (i != (algorithmNames.size() - 1)) {
                 outputStream << ",";
             } else {

@@ -21,7 +21,6 @@ typedef struct quickStatistics {
 static constexpr int ALIGNMENT_SIZE = 32;
 
 // Even forcing no avx usage by the compiler doesn't change perf!
-__attribute__((optimize("no-tree-vectorize")))
 long computeSad(
         const uint8_t* a, 
         const uint8_t* b,
