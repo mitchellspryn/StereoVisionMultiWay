@@ -30,7 +30,8 @@ add_executable(GenerateDisparityVisualization
     src/DisparityMapGeneratorFactory.cpp
     src/OpenClDisparityMapGenerator.cpp
     src/OpenMpThreadedDisparityMapGenerator.cpp
-    src/SingleThreadedDisparityMapGenerator.cpp)
+    src/SingleThreadedDisparityMapGenerator.cpp
+    src/SingleThreadedSimdDisparityMapGenerator.cpp)
 
 target_link_libraries(GenerateDisparityVisualization
   ${OpenCV_LIBRARIES}
@@ -51,7 +52,8 @@ add_executable(SpeedTest
     src/DisparityMapGeneratorFactory.cpp
     src/OpenClDisparityMapGenerator.cpp
     src/OpenMpThreadedDisparityMapGenerator.cpp
-    src/SingleThreadedDisparityMapGenerator.cpp)
+    src/SingleThreadedDisparityMapGenerator.cpp
+    src/SingleThreadedSimdDisparityMapGenerator.cpp)
 
 target_link_libraries(SpeedTest
   ${OpenCV_LIBRARIES}

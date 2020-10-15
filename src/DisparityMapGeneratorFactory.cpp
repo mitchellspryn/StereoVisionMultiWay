@@ -1,6 +1,7 @@
 #include "../include/CudaDisparityMapGenerator.hpp"
 #include "../include/DisparityMapGeneratorFactory.hpp"
 #include "../include/SingleThreadedDisparityMapGenerator.hpp"
+#include "../include/SingleThreadedSimdDisparityMapGenerator.hpp"
 #include "../include/OpenClDisparityMapGenerator.hpp"
 #include "../include/OpenMpThreadedDisparityMapGenerator.hpp"
 
@@ -9,6 +10,8 @@ std::unique_ptr<DisparityMapGenerator> DisparityMapGeneratorFactory::create(
     
     if (this->caseInsensitiveStringsEqual(parameters.algorithmName, "SingleThreaded")) {
         return std::make_unique<SingleThreadedDisparityMapGenerator>(parameters);
+    } else if (this->caseInsensitiveStringsEqual(parameters.algorithmName, "SingleThreadedSimd")) {
+      return std::make_unique<SingleThreadedSimdDisparityMapGenerator>(parameters);  
     } else if (this->caseInsensitiveStringsEqual(parameters.algorithmName, "OpenMP")) {
         return std::make_unique<OpenMpThreadedDisparityMapGenerator>(parameters);
     } else if (this->caseInsensitiveStringsEqual(parameters.algorithmName, "CUDA")) {
