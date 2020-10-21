@@ -5,7 +5,7 @@ This repository contains a few implementations of simple stereo block matching a
 
 The same algorithm has been implemented in multiple different ways, using different strategies for parallelizing the work to improve performance. For a more in-depth discussion and analysis of the algorithms used, [read the blog post](http://www.mitchellspryn.com/2020/10/18/Improving-The-Performance-Of-Disparity-Map-Computation-Via-Parallelization.html). Shown below is a comparison of all of the different algorithms contained within this repository:
 
-![all_cpu_and_cuda](./data/all_cpu_and_cuda)
+![all_cpu_and_cuda](./data/all_cpu_and_cuda.png)
 
 # Build instructions
 In order to build this project, the following dependencies need to be installed:
